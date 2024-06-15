@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Chat</title>
+    <style>
+        ul { list-style-type: none; padding: 0; }
+        li { padding: 8px; margin-bottom: 10px; background-color: #f4f4f4; }
+        input { padding: 10px; width: calc(100% - 22px); margin-top: 10px; }
+        button { padding: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Chat Application</h1>
+    <ul id="messages"></ul>
+    <input id="message" autocomplete="off" placeholder="Type a message...">
+    <button onclick="sendMessage()">Send</button>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        document.getElementById('message').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        socket.on('chat message', function(msg) {
+            const item = document.createElement('li');
+            item.textContent = msg;
+            document.getElementById('messages').appendChild(item);
+        });
+
+        function sendMessage() {
+            const input = document.getElementById('message');
+            socket.emit('chat message', input.value);
+            input.value = '';
+        }
+    </script>
+</body>
+</html>
